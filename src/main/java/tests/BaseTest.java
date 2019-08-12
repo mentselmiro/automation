@@ -1,17 +1,14 @@
 package tests;
 
 import config.ApplicationConfig;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import pages.DashboardPage;
 import pages.LoginPage;
-
-import static config.ApplicationConfig.driver;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BaseTest {
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass(){
         ApplicationConfig.invokeBrowser();
 
@@ -24,8 +21,9 @@ public class BaseTest {
     }
 
 
-    @AfterClass
+    @AfterAll
     public static void afterClass(){
+        System.out.println("Kill BROWSER");
         ApplicationConfig.killBrowser();
     }
 
@@ -34,7 +32,7 @@ public class BaseTest {
         loginPage.login("miroslav.mentsel+autorun@receipt-bank.com","SweetDreams");
         Thread.sleep(300);
         DashboardPage dashboardPage = new DashboardPage();
-        Assert.assertEquals("Account Settings", dashboardPage.getAccountSettingsLink().getText());
+        assertEquals("Account Settings", dashboardPage.getAccountSettingsLink().getText());
     }
 
 }

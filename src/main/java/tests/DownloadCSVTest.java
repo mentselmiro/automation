@@ -1,13 +1,11 @@
 package tests;
 
 import com.opencsv.CSVReader;
-import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion;
 import config.Settings;
 import enums.csv.file.formats.ReceiptBankDefaultCSV;
 import modals.DownloadModal;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebElement;
 import pages.DashboardPage;
 import pages.DownloadPage;
@@ -20,6 +18,9 @@ import java.io.FileReader;
 
 import java.io.Reader;
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DownloadCSVTest extends BaseTest {
 
@@ -37,6 +38,11 @@ public class DownloadCSVTest extends BaseTest {
         Map<ReceiptBankDefaultCSV, String> expectedValues = new HashMap();
         expectedValues.put(ReceiptBankDefaultCSV.TYPE, itemDetailsPage.getItemType());
         expectedValues.put(ReceiptBankDefaultCSV.DATE, itemDetailsPage.getItemDate());
+        expectedValues.put(ReceiptBankDefaultCSV.DUE_DATE, itemDetailsPage.getItemDueDate());
+        expectedValues.put(ReceiptBankDefaultCSV.INVOICE_NUMBER, itemDetailsPage.getInvoiceNumber());
+        expectedValues.put(ReceiptBankDefaultCSV.SUPPLIER, itemDetailsPage.getSupplierName());
+        expectedValues.put(ReceiptBankDefaultCSV.CATEGORY, itemDetailsPage.getCategoryName());
+
 
         dashboardPage.clickInbox();
         inboxPage.clickCheckbox(1);
@@ -49,7 +55,7 @@ public class DownloadCSVTest extends BaseTest {
         DownloadPage downloadPage = new DownloadPage();
         downloadPage.waitForPageLoading();
         WebElement downloadPageButton = downloadPage.getButton();
-        Assert.assertTrue(downloadPageButton.isDisplayed());
+        assertTrue(downloadPageButton.isDisplayed());
         String fileName = downloadPage.getFileName();
         downloadPageButton.click();
 
@@ -72,11 +78,15 @@ public class DownloadCSVTest extends BaseTest {
             }
             List<String> headers = Arrays.asList(list.get(0));
             for (ReceiptBankDefaultCSV header : ReceiptBankDefaultCSV.values()) {
-                Assert.assertTrue(headers.contains(header.getName()));
+                assertTrue(headers.contains(header.getName()));
             }
 
-            Assert.assertEquals(expectedValues.get(ReceiptBankDefaultCSV.TYPE), list.get(1)[1]);
-            Assert.assertEquals(expectedValues.get(ReceiptBankDefaultCSV.DATE), list.get(1)[2]);
+            assertEquals(expectedValues.get(ReceiptBankDefaultCSV.TYPE), list.get(1)[1]);
+            assertEquals(expectedValues.get(ReceiptBankDefaultCSV.DATE), list.get(1)[2]);
+            assertEquals(expectedValues.get(ReceiptBankDefaultCSV.DUE_DATE), list.get(1)[3]);
+            assertEquals(expectedValues.get(ReceiptBankDefaultCSV.INVOICE_NUMBER), list.get(1)[4]);
+            assertEquals(expectedValues.get(ReceiptBankDefaultCSV.SUPPLIER), list.get(1)[5]);
+            assertEquals(expectedValues.get(ReceiptBankDefaultCSV.CATEGORY), list.get(1)[6]);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,9 +94,10 @@ public class DownloadCSVTest extends BaseTest {
 
     }
 
-    @AfterClass
-    public static void after() {
+    @AfterEach
+    public void after() {
         File file = new File(fullFileName);
+        System.out.println("File Deletion");
 
         file.delete();
     }
